@@ -6,12 +6,13 @@ st.title("🔍 AI-Powered Job Search Assistant")
 
 # Sidebar filters
 st.sidebar.header("Filters")
-location = st.sidebar.text_input("Location", "Pune","Mumbia","Banglore","Hyderabad")
+location = st.sidebar.selectbox("Location", ["Pune", "Mumbai", "Bangalore", "Hyderabad"])
 experience = st.sidebar.selectbox("Experience", ["Fresher", "1-3 years", "3-5 years", "5+ years"])
 salary_min = st.sidebar.number_input("Minimum Salary (LPA)", min_value=0, value=0)
 
-# Main chat-style input
-query = st.text_input("What job are you looking for?", "Python Developer","Web Developer","Full Stack Developer","DevOps Engineer","Java Developer")
+# Main input
+query = st.selectbox("What job are you looking for?", 
+                      ["Python Developer", "Web Developer", "Full Stack Developer", "DevOps Engineer", "Java Developer"])
 
 if st.button("Search Jobs"):
     with st.spinner("Searching..."):
