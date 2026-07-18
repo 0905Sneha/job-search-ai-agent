@@ -1,20 +1,22 @@
 import streamlit as st
 from job_search import search_jobs
+from style import apply_custom_style
 
-st.set_page_config(page_title="AI Job Search Assistant", layout="wide")
+st.set_page_config(page_title="AI Job Search Assistant", page_icon="🔍", layout="wide")
+apply_custom_style()
+
 st.title("🔍 AI-Powered Job Search Assistant")
+st.caption("Find real, live job listings across India — matched to your filters.")
 
-# Sidebar filters
-st.sidebar.header("Filters")
-location = st.sidebar.selectbox("Location", ["Pune", "Mumbai", "Bangalore", "Hyderabad"])
-experience = st.sidebar.selectbox("Experience", ["Fresher", "1-3 years", "3-5 years", "5+ years"])
-salary_min = st.sidebar.number_input("Minimum Salary (LPA)", min_value=0, value=0)
+st.sidebar.header("🎯 Filters")
+location = st.sidebar.selectbox("📍 Location", ["Pune", "Mumbai", "Bangalore", "Hyderabad"])
+experience = st.sidebar.selectbox("💼 Experience", ["Fresher", "1-3 years", "3-5 years", "5+ years"])
+salary_min = st.sidebar.number_input("💰 Minimum Salary (LPA)", min_value=0, value=0)
 
-# Main input
-query = st.selectbox("What job are you looking for?", 
+query = st.selectbox("What job are you looking for?",
                       ["Python Developer", "Web Developer", "Full Stack Developer", "DevOps Engineer", "Java Developer"])
 
-if st.button("Search Jobs"):
+if st.button("🔎 Search Jobs"):
     with st.spinner("Searching..."):
         result = search_jobs(query, location=location, experience=experience, salary_min=salary_min)
 
@@ -25,10 +27,12 @@ if st.button("Search Jobs"):
     else:
         st.success(f"Found {len(result['jobs'])} jobs")
         for job in result["jobs"]:
-            with st.container():
-                st.subheader(job["title"])
-                st.write(f"**{job['company']}** — {job['location']}")
-                st.write(f"💰 {job['salary']}")
-                st.write(job["description"] + "...")
-                st.markdown(f"[Apply here]({job['link']})")
-                st.divider()
+            st.markdown(f"""
+                <div class="job-card">
+                    <h3>{job['title']}</h3>
+                    <p><b>{job['company']}</b> — {job['location']}</p>
+                    <p>💰 {job['salary']}</p>
+                    <p>{job['description']}...</p>
+                    <a href="{job['link']}" target="_blank">Apply here →</a>
+                </div>
+            """, unsafe_allow_html=True)
