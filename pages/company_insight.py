@@ -11,7 +11,7 @@ st.caption("See which companies are actively hiring right now.")
 company_query = st.text_input("Enter a role to see hiring companies", "Python Developer")
 location = st.selectbox("Location", ["Pune", "Mumbai", "Bangalore", "Hyderabad"])
 
-if st.button("🔍 Find Hiring Companies"):
+if st.button("Find Hiring Companies"):
     with st.spinner("Fetching company data..."):
         result = search_jobs(company_query, location=location, num_results=30)
 
@@ -27,7 +27,7 @@ if st.button("🔍 Find Hiring Companies"):
 
         st.success(f"Found {len(sorted_companies)} companies hiring")
         for name, count in sorted_companies:
-            badge = "🔥 Urgently Hiring" if count >= 3 else "Hiring"
+            badge = "Urgently Hiring" if count >= 3 else "Hiring"
             st.markdown(f"""
                 <div class="job-card">
                     <h4>{name}</h4>

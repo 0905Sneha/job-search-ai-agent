@@ -1,11 +1,12 @@
 import os
+import streamlit as st
 import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-APP_ID = os.getenv("ADZUNA_APP_ID")
-APP_KEY = os.getenv("ADZUNA_APP_KEY")
+APP_ID = os.getenv("ADZUNA_APP_ID") or st.secrets.get("ADZUNA_APP_ID")
+APP_KEY = os.getenv("ADZUNA_APP_KEY") or st.secrets.get("ADZUNA_APP_KEY")
 BASE_URL = "https://api.adzuna.com/v1/api/jobs/in/search/1"
 
 def search_jobs(query, location="Pune", experience=None, salary_min=None, num_results=20):

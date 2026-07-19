@@ -4,27 +4,45 @@ def apply_custom_style():
     st.markdown("""
         <style>
         .stApp {
-            background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 50%, #16213e 100%);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%);
         }
         h1 {
-            background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+            background: linear-gradient(90deg, #ff1744, #ffffff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
         }
+        h2, h3, h4 {
+            color: #ffffff;
+        }
+        p, .stMarkdown, .stCaption {
+            color: #e0e0e0;
+        }
         .job-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 23, 68, 0.3);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 16px;
             transition: 0.2s;
         }
         .job-card:hover {
-            border: 1px solid rgba(0, 212, 255, 0.6);
+            border: 1px solid #ff1744;
+            box-shadow: 0 0 12px rgba(255, 23, 68, 0.25);
+        }
+        .job-card h3, .job-card h4 {
+            color: #ffffff;
+        }
+        .job-card a {
+            color: #ff1744;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .job-card a:hover {
+            color: #ffffff;
         }
         .stButton>button {
-            background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+            background: linear-gradient(90deg, #ff1744, #b71c1c);
             color: white;
             border: none;
             border-radius: 8px;
@@ -32,10 +50,15 @@ def apply_custom_style():
             font-weight: 600;
         }
         .stButton>button:hover {
-            opacity: 0.9;
+            background: linear-gradient(90deg, #ffffff, #e0e0e0);
+            color: #000000;
         }
         section[data-testid="stSidebar"] {
-            background: rgba(15, 12, 41, 0.9);
+            background: #0a0a0a;
+            border-right: 1px solid rgba(255, 23, 68, 0.2);
+        }
+        div[data-baseweb="select"] {
+            border-color: rgba(255, 23, 68, 0.3) !important;
         }
         </style>
     """, unsafe_allow_html=True)
