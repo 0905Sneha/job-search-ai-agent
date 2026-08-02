@@ -15,12 +15,10 @@ if uploaded_file:
     with st.spinner("Reading your resume..."):
         raw_text = extract_text_from_pdf(uploaded_file)
         st.subheader("Extracted Resume Text")
-        st.write(raw_text[:1000])  
         parsed = parse_resume(raw_text)
-        st.session_state["parsed_resume"] = parsed 
+        st.session_state["parsed_resume"] = parsed
         st.success("Resume stored!")
 
-        st.write(st.session_state) 
     st.success("Resume parsed successfully")
     st.write(f"**Email:** {parsed['email'] or 'Not found'}")
     st.write(f"**Phone:** {parsed['phone'] or 'Not found'}")

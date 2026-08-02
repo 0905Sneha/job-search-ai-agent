@@ -173,5 +173,17 @@ def apply_custom_style():
         [data-testid="stFileUploaderDropzone"] button * {{
             color: #ffffff !important;
         }}
+        /* Text inputs and text areas */
+        input[type="text"], textarea,
+        div[data-baseweb="input"] > div,
+        div[data-baseweb="textarea"] > div {{
+            background-color: {select_bg} !important;
+            color: {text_color} !important;
+            border: 1px solid {card_border} !important;
+        }}
+        div[data-baseweb="input"] input,
+        div[data-baseweb="textarea"] textarea {{
+            color: {text_color} !important;
+        }}
         </style>
     """, unsafe_allow_html=True)
