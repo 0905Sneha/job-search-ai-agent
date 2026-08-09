@@ -32,7 +32,10 @@ def search_jobs_adzuna(query, location="Pune", salary_min=None, num_results=20):
         params["salary_min"] = salary_min
 
     try:
+        print("Adzuna params:", params)
         response = requests.get(BASE_URL, params=params, timeout=8)
+        print("Adzuna status code:", response.status_code)
+        print("Adzuna response snippet:", response.text[:300])
         if response.status_code != 200:
             return []
         data = response.json()

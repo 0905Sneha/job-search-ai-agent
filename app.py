@@ -1,11 +1,13 @@
 import streamlit as st
 from job_search import search_jobs
 from style import apply_custom_style
+from database import init_db, save_job, save_preferences, get_preferences
+
+init_db()
 
 st.set_page_config(page_title="AI Job Search Assistant", page_icon="🔍", layout="wide")
 apply_custom_style()
 
-# Hero section
 st.markdown("""
     <div class="hero">
         <div class="hero-badge">🇮🇳 Live Indian Job Listings</div>
@@ -14,11 +16,31 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-st.sidebar.header("🎯 Filters")
-location = st.sidebar.selectbox("Location", ["Pune", "Mumbai", "Bangalore", "Hyderabad"])
-experience = st.sidebar.selectbox(" Experience", ["Fresher", "1-3 years", "3-5 years", "5+ years"])
-work_mode = st.sidebar.selectbox(" Work Mode", ["Any", "Remote", "On-site", "Hybrid"])
-salary_min = st.sidebar.number_input(" Minimum Salary (LPA)", min_value=0, value=0)
+saved_prefs = get_preferences()
+default_location = saved_prefs[0] if saved_prefs else "Pune"
+default_experience = saved_prefs[1] if saved_prefs else "Fresher"
+default_work_mode = saved_prefs[2] if saved_prefs else "Any"
+
+location_options = ["Pune", "Mumbai", "Bangalore", "Hyderabad"]
+experience_options = ["Fresher", "1-3 years", "3-5 years", "5+ years"]
+work_mode_options = ["Any", "Remote", "On-site", "Hybrid"]
+
+st.sidebar.header("Filters")
+location = st.sidebar.selectbox(
+    "Location", location_options,
+    index=location_options.index(default_location) if default_location in location_options else 0
+)
+experience = st.sidebar.selectbox(
+    "Experience", experience_options,
+    index=experience_options.index(default_experience) if default_experience in experience_options else 0
+)
+work_mode = st.sidebar.selectbox(
+    "Work Mode", work_mode_options,
+    index=work_mode_options.index(default_work_mode) if default_work_mode in work_mode_options else 0
+)
+salary_min = st.sidebar.number_input("Minimum Salary (LPA)", min_value=1, value=1)
+
+save_preferences(location, experience, work_mode)
 
 col_a, col_b = st.columns([3, 1])
 with col_a:
@@ -27,13 +49,15 @@ with col_a:
 with col_b:
     st.write("")
     st.write("")
-    search_clicked = st.button("Search Jobs", use_container_width=True)
+    search_clicked = st.button("🔎 Search Jobs", use_container_width=True)
 
 if search_clicked:
     with st.spinner("Searching across sources..."):
-        search_query = query if work_mode == "Any" else f"{query} {work_mode}"
-        result = search_jobs(search_query, location=location, experience=experience, salary_min=salary_min)
+        result = search_jobs(query, location=location, experience=experience, salary_min=salary_min)
+        st.session_state["last_result"] = result
 
+if "last_result" in st.session_state:
+    result = st.session_state["last_result"]
     if result["error"]:
         st.error(result["error"])
     elif not result["jobs"]:
@@ -41,9 +65,9 @@ if search_clicked:
     else:
         jobs = result["jobs"]
         if work_mode != "Any":
-            jobs = [j for j in jobs if work_mode.lower() in j["description"].lower() or work_mode.lower() in j["title"].lower()] or jobs
+            filtered = [j for j in jobs if work_mode.lower() in j["description"].lower() or work_mode.lower() in j["title"].lower()]
+            jobs = filtered if filtered else jobs
 
-        # Stats row
         s1, s2, s3 = st.columns(3)
         with s1:
             st.markdown(f'<div class="stat-box"><div class="stat-number">{len(jobs)}</div><div class="stat-label">Jobs Found</div></div>', unsafe_allow_html=True)
@@ -55,7 +79,6 @@ if search_clicked:
 
         st.write("")
 
-        # Job cards in a 2-column grid
         cols = st.columns(2)
         for idx, job in enumerate(jobs):
             with cols[idx % 2]:
@@ -63,8 +86,11 @@ if search_clicked:
                     <div class="job-card">
                         <h4>{job['title']}</h4>
                         <div class="job-company">{job['company']}</div>
-                        <div class="job-meta">{job['location']} &nbsp;|&nbsp; {job['salary']}</div>
+                        <div class="job-meta">📍 {job['location']} &nbsp;|&nbsp; 💰 {job['salary']}</div>
                         <div class="job-desc">{job['description']}...</div>
                         <a href="{job['link']}" target="_blank">Apply here →</a>
                     </div>
                 """, unsafe_allow_html=True)
+                if st.button("Save Job", key=f"save_{idx}"):
+                    save_job(job)
+                    st.success(f"Saved: {job['title']}")

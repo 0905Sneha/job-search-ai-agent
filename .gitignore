@@ -1,3 +1,4 @@
 .env
 __pycache__/
 *.pyc
+career_app.db
