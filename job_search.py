@@ -102,3 +102,41 @@ def search_jobs(query, location="Pune", experience=None, salary_min=None, num_re
         return {"error": "No jobs found from either source. Check your API keys.", "jobs": []}
 
     return {"error": None, "jobs": unique_jobs}
+def get_salary_benchmark(query, location="Pune"):
+    """
+    Fetches salary stats for a role+location using Adzuna's raw numeric data.
+    """
+    params = {
+        "app_id": APP_ID,
+        "app_key": APP_KEY,
+        "what": query,
+        "where": location,
+        "results_per_page": 50,
+        "content-type": "application/json"
+    }
+    try:
+        response = requests.get(BASE_URL, params=params, timeout=8)
+        if response.status_code != 200:
+            return None
+        data = response.json()
+        results = data.get("results", [])
+
+        salaries = []
+        for job in results:
+            min_sal = job.get("salary_min")
+            max_sal = job.get("salary_max")
+            if min_sal and max_sal:
+                salaries.append((min_sal + max_sal) / 2)
+
+        if not salaries:
+            return None
+
+        return {
+            "average": int(sum(salaries) / len(salaries)),
+            "minimum": int(min(salaries)),
+            "maximum": int(max(salaries)),
+            "sample_size": len(salaries)
+        }
+    except Exception as e:
+        print("Salary benchmark error:", e)
+        return None

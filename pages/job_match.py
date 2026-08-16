@@ -21,12 +21,13 @@ parsed_resume = st.session_state["parsed_resume"]
 if st.button("Analyze Resume"):
 
     result = analyze_resume(parsed_resume)
+    st.session_state["resume_analysis"] = result
 
     st.metric("ATS Score", f"{result['ats_score']}%")
 
     st.subheader("Recommended Roles")
     for role in result["recommended_roles"]:
-        st.write(f"✅ {role}")
+        st.write(f" {role}")
 
     st.subheader("Strengths")
     for item in result["strengths"]:
@@ -40,4 +41,5 @@ if st.button("Analyze Resume"):
     for item in result["suggestions"]:
         st.write(f"• {item}")
 
+    st.info("Head to the -> Career Path page for a phased skill-development roadmap based on this analysis.")
     
